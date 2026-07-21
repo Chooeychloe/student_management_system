@@ -36,7 +36,12 @@ class NavigationPanel extends StatelessWidget {
             icon: Icons.dashboard,
             title: "Dashboard",
           ),
-
+          _menuTile(
+            context,
+            page: AppPage.students,
+            icon: Icons.people,
+            title: "Students",
+          ),
           _menuTile(
             context,
             page: AppPage.settings,

@@ -3,10 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:student_management_system/widgets/dialogs/delete_confirmation_dialog.dart';
 import 'package:student_management_system/widgets/dialogs/student_profile_dialog.dart';
 
-import '../models/student.dart';
-import '../providers/student_provider.dart';
-import 'dialogs/student_form_dialog.dart';
-import 'common/loading_indicator.dart';
+import '../../models/student.dart';
+import '../../providers/student_provider.dart';
+import '../dialogs/student_form_dialog.dart';
+import '../common/loading_indicator.dart';
 
 class StudentTable extends StatelessWidget {
   const StudentTable({super.key});

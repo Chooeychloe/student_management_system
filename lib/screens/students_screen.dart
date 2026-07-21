@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'dashboard_statistics.dart';
+import '../widgets/students/search_toolbar.dart';
+import '../widgets/students/student_table.dart';
 
-class DashboardContent extends StatelessWidget {
-  const DashboardContent({super.key});
+class StudentsScreen extends StatelessWidget {
+  const StudentsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,24 +14,17 @@ class DashboardContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Dashboard",
+            "Students",
             style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
           ),
 
           SizedBox(height: 24),
 
-          DashboardStatistics(),
+          SearchToolbar(),
 
-          SizedBox(height: 24),
+          SizedBox(height: 20),
 
-          Expanded(
-            child: Center(
-              child: Text(
-                "Analytics Coming Soon",
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
-          ),
+          Expanded(child: StudentTable()),
         ],
       ),
     );

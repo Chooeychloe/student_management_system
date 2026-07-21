@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum AppPage { dashboard, settings, about, backupRestore }
+enum AppPage { dashboard, students, settings, about, backupRestore }
 
 class NavigationProvider extends ChangeNotifier {
   AppPage _currentPage = AppPage.dashboard;

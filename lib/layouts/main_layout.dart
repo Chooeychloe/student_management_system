@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student_management_system/screens/students_screen.dart';
 
 import '../core/constants.dart';
 import '../providers/navigation_provider.dart';
@@ -30,6 +31,9 @@ class MainLayout extends StatelessWidget {
                 switch (navigation.currentPage) {
                   case AppPage.dashboard:
                     return const DashboardScreen();
+
+                  case AppPage.students:
+                    return const StudentsScreen();
 
                   case AppPage.backupRestore:
                     return const BackupRestoreScreen();
