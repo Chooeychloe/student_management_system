@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_management_system/widgets/dialogs/delete_confirmation_dialog.dart';
+import 'package:student_management_system/widgets/dialogs/student_profile_dialog.dart';
 
 import '../models/student.dart';
 import '../providers/student_provider.dart';
@@ -17,7 +18,9 @@ class StudentTable extends StatelessWidget {
         if (provider.isLoading) {
           return const LoadingIndicator();
         }
-
+        print("Students: ${provider.students.length}");
+        print("Filtered: ${provider.filteredStudents.length}");
+        print("Paginated: ${provider.paginatedStudents.length}");
         if (provider.filteredStudents.isEmpty) {
           return const Center(
             child: Text("No students found.", style: TextStyle(fontSize: 18)),
@@ -168,6 +171,16 @@ class StudentTable extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                IconButton(
+                  tooltip: "View",
+                  icon: const Icon(Icons.visibility, color: Colors.blue),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => StudentProfileDialog(student: student),
+                    );
+                  },
+                ),
                 IconButton(
                   tooltip: "Edit",
                   icon: const Icon(Icons.edit),

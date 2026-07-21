@@ -6,66 +6,65 @@ import '../models/student.dart';
 class StudentProvider extends ChangeNotifier {
   final StudentRepository _repository = StudentRepository();
 
-  List<Student> _students = [];
-  List<Student> filteredStudents = [];
-  List<Student> get students => _students;
+  final List<Student> _students = [];
+
+  List<Student> _filteredStudents = [];
 
   bool _isLoading = false;
 
   bool get isLoading => _isLoading;
 
+  List<Student> get students => List.unmodifiable(_students);
+
+  List<Student> get filteredStudents => List.unmodifiable(_filteredStudents);
+
+  // Search & Filter
+  String searchText = "";
+  String selectedCourse = "All";
+  int? selectedYear;
+
+  // Pagination
   int _currentPage = 1;
   final int _rowsPerPage = 10;
 
   int get currentPage => _currentPage;
+
   int get rowsPerPage => _rowsPerPage;
 
-  String searchText = "";
+  int get totalStudents => _students.length;
 
-  String selectedCourse = "All";
+  int get totalPages {
+    if (_filteredStudents.isEmpty) return 1;
 
-  int? selectedYear;
+    return (_filteredStudents.length / _rowsPerPage).ceil();
+  }
 
   List<Student> get paginatedStudents {
+    if (_filteredStudents.isEmpty) return [];
+
     final start = (_currentPage - 1) * _rowsPerPage;
+
+    if (start >= _filteredStudents.length) return [];
+
     final end = start + _rowsPerPage;
 
-    if (start >= _students.length) return [];
-
-    return _students.sublist(
+    return _filteredStudents.sublist(
       start,
-      end > _students.length ? _students.length : end,
+      end > _filteredStudents.length ? _filteredStudents.length : end,
     );
-  }
-
-  int get totalPages => (_students.length / _rowsPerPage).ceil();
-
-  void nextPage() {
-    if (_currentPage < totalPages) {
-      _currentPage++;
-      notifyListeners();
-    }
-  }
-
-  void previousPage() {
-    if (_currentPage > 1) {
-      _currentPage--;
-      notifyListeners();
-    }
-  }
-
-  void goToPage(int page) {
-    if (page >= 1 && page <= totalPages) {
-      _currentPage = page;
-      notifyListeners();
-    }
   }
 
   Future<void> loadStudents() async {
     _isLoading = true;
     notifyListeners();
 
-    _students = await _repository.getStudents();
+    final students = await _repository.getStudents();
+
+    _students
+      ..clear()
+      ..addAll(students);
+
+    _refreshFilteredStudents();
 
     _isLoading = false;
     notifyListeners();
@@ -86,15 +85,68 @@ class StudentProvider extends ChangeNotifier {
     await loadStudents();
   }
 
-  int get totalStudents => _students.length;
-  void applyFilters() {
-    filteredStudents =
-        students.where((student) {
+  void searchStudents(String value) {
+    searchText = value;
+    _refreshFilteredStudents();
+    notifyListeners();
+  }
+
+  void filterByCourse(String? value) {
+    selectedCourse = value ?? "All";
+    _refreshFilteredStudents();
+    notifyListeners();
+  }
+
+  void filterByYear(int? value) {
+    selectedYear = value;
+    _refreshFilteredStudents();
+    notifyListeners();
+  }
+
+  void nextPage() {
+    if (_currentPage < totalPages) {
+      _currentPage++;
+      notifyListeners();
+    }
+  }
+
+  void previousPage() {
+    if (_currentPage > 1) {
+      _currentPage--;
+      notifyListeners();
+    }
+  }
+
+  void goToPage(int page) {
+    if (page < 1 || page > totalPages) return;
+
+    _currentPage = page;
+
+    notifyListeners();
+  }
+
+  void _refreshFilteredStudents() {
+    _filteredStudents =
+        _students.where((student) {
           final matchesSearch =
+              searchText.isEmpty ||
+              student.studentNumber.toLowerCase().contains(
+                searchText.toLowerCase(),
+              ) ||
+              student.firstName.toLowerCase().contains(
+                searchText.toLowerCase(),
+              ) ||
+              student.middleName.toLowerCase().contains(
+                searchText.toLowerCase(),
+              ) ||
+              student.lastName.toLowerCase().contains(
+                searchText.toLowerCase(),
+              ) ||
               student.fullName.toLowerCase().contains(
                 searchText.toLowerCase(),
               ) ||
-              student.studentNumber.contains(searchText);
+              student.email.toLowerCase().contains(searchText.toLowerCase()) ||
+              student.contactNumber.contains(searchText);
 
           final matchesCourse =
               selectedCourse == "All" || student.course == selectedCourse;
@@ -105,32 +157,14 @@ class StudentProvider extends ChangeNotifier {
           return matchesSearch && matchesCourse && matchesYear;
         }).toList();
 
-    notifyListeners();
+    _currentPage = 1;
   }
 
-  void searchStudents(String value) {
-    searchText = value;
+  int get totalBSCS => _students.where((s) => s.course == "BSCS").length;
 
-    applyFilters();
-  }
+  int get totalBSIT => _students.where((s) => s.course == "BSIT").length;
 
-  void filterByCourse(String? value) {
-    selectedCourse = value ?? "All";
+  int get totalBSIS => _students.where((s) => s.course == "BSIS").length;
 
-    applyFilters();
-  }
-
-  void filterByYear(int? value) {
-    selectedYear = value;
-
-    applyFilters();
-  }
-
-  int get totalBSCS => students.where((s) => s.course == "BSCS").length;
-
-  int get totalBSIT => students.where((s) => s.course == "BSIT").length;
-
-  int get totalBSIS => students.where((s) => s.course == "BSIS").length;
-
-  int get totalBSEMC => students.where((s) => s.course == "BSEMC").length;
+  int get totalBSEMC => _students.where((s) => s.course == "BSEMC").length;
 }
