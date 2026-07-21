@@ -160,6 +160,16 @@ class StudentProvider extends ChangeNotifier {
     _currentPage = 1;
   }
 
+  List<Student> get recentStudents {
+    final students = List<Student>.from(_students);
+
+    students.sort((a, b) {
+      return (b.id ?? 0).compareTo(a.id ?? 0);
+    });
+
+    return students.take(5).toList();
+  }
+
   int get totalBSCS => _students.where((s) => s.course == "BSCS").length;
 
   int get totalBSIT => _students.where((s) => s.course == "BSIT").length;

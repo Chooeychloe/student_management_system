@@ -9,64 +9,67 @@ class DashboardStatistics extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<StudentProvider>(
-      builder: (_, provider, __) {
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            final cards = [
-              StatisticCard(
-                title: "Total Students",
-                value: provider.totalStudents.toString(),
-                icon: Icons.people,
-                color: Colors.blue,
-              ),
-              StatisticCard(
-                title: "BSCS",
-                value: provider.totalBSCS.toString(),
-                icon: Icons.computer,
-                color: Colors.green,
-              ),
-              StatisticCard(
-                title: "BSIT",
-                value: provider.totalBSIT.toString(),
-                icon: Icons.laptop,
-                color: Colors.orange,
-              ),
-              StatisticCard(
-                title: "BSIS",
-                value: provider.totalBSIS.toString(),
-                icon: Icons.storage,
-                color: Colors.purple,
-              ),
-            ];
+    final provider = context.watch<StudentProvider>();
 
-            if (constraints.maxWidth > 950) {
-              return Row(
-                children:
-                    cards
-                        .map(
-                          (card) => Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 15),
-                              child: card,
-                            ),
-                          ),
-                        )
-                        .toList(),
-              );
-            }
+    return SizedBox(
+      height: 150,
+      child: Row(
+        children: [
+          Expanded(
+            child: StatisticCard(
+              icon: Icons.people,
+              color: Colors.indigo,
+              title: "Students",
+              value: provider.totalStudents,
+              subtitle: "Registered",
+            ),
+          ),
 
-            return Wrap(
-              spacing: 15,
-              runSpacing: 15,
-              children:
-                  cards
-                      .map((card) => SizedBox(width: 280, child: card))
-                      .toList(),
-            );
-          },
-        );
-      },
+          const SizedBox(width: 16),
+
+          Expanded(
+            child: StatisticCard(
+              icon: Icons.computer,
+              color: Colors.blue,
+              title: "BSCS",
+              value: provider.totalBSCS,
+            ),
+          ),
+
+          const SizedBox(width: 16),
+
+          Expanded(
+            child: StatisticCard(
+              icon: Icons.laptop,
+              color: Colors.orange,
+              title: "BSIT",
+              value: provider.totalBSIT,
+            ),
+          ),
+
+          const SizedBox(width: 16),
+
+          Expanded(
+            child: StatisticCard(
+              icon: Icons.storage,
+              color: Colors.green,
+              title: "BSIS",
+              value: provider.totalBSIS,
+            ),
+          ),
+
+          const SizedBox(width: 16),
+
+          Expanded(
+            child: StatisticCard(
+              icon: Icons.games,
+              color: Colors.red,
+              title: "BSEMC",
+              value: provider.totalBSEMC,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
