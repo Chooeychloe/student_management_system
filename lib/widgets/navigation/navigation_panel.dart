@@ -8,8 +8,6 @@ class NavigationPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final navigation = context.watch<NavigationProvider>();
-
     return Container(
       color: Colors.indigo,
       child: Column(

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student_management_system/services/export_service.dart';
+import 'package:student_management_system/services/import_service.dart';
+import 'package:student_management_system/widgets/dialogs/import_result_dialog.dart';
 
 import '../../core/constants.dart';
 import '../../providers/student_provider.dart';
@@ -78,6 +81,45 @@ class SearchToolbar extends StatelessWidget {
               },
               icon: const Icon(Icons.add),
               label: const Text("Add Student"),
+            ),
+            OutlinedButton.icon(
+              icon: const Icon(Icons.download),
+              label: const Text("Export CSV"),
+              onPressed: () async {
+                final provider = context.read<StudentProvider>();
+
+                final success = await ExportService().exportStudentsToCSV(
+                  provider.filteredStudents,
+                );
+
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        success
+                            ? "CSV exported successfully."
+                            : "Export cancelled.",
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+            OutlinedButton.icon(
+              icon: const Icon(Icons.upload_file),
+              label: const Text("Import CSV"),
+              onPressed: () async {
+                final result = await ImportService().importStudentsFromCSV();
+
+                await context.read<StudentProvider>().loadStudents();
+
+                if (!context.mounted) return;
+
+                showDialog(
+                  context: context,
+                  builder: (_) => ImportResultDialog(result: result),
+                );
+              },
             ),
           ],
         ),

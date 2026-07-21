@@ -18,9 +18,7 @@ class StudentTable extends StatelessWidget {
         if (provider.isLoading) {
           return const LoadingIndicator();
         }
-        print("Students: ${provider.students.length}");
-        print("Filtered: ${provider.filteredStudents.length}");
-        print("Paginated: ${provider.paginatedStudents.length}");
+
         if (provider.filteredStudents.isEmpty) {
           return const Center(
             child: Text("No students found.", style: TextStyle(fontSize: 18)),

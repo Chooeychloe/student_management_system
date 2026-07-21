@@ -172,6 +172,5 @@ class _BackupRestoreContentState extends State<BackupRestoreContent> {
         ),
       ),
     );
-    ;
   }
 }

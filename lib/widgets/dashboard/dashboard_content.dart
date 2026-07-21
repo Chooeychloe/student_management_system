@@ -24,7 +24,6 @@ class DashboardContent extends StatelessWidget {
           DashboardStatistics(),
 
           SizedBox(height: 20),
-
           SearchToolbar(),
 
           SizedBox(height: 20),
