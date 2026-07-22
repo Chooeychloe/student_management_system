@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/students/search_toolbar.dart';
-import '../widgets/students/student_table.dart';
+import '../widgets/student_table/student_table.dart';
 
 class StudentsScreen extends StatelessWidget {
   const StudentsScreen({super.key});

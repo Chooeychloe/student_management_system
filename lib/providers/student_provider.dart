@@ -5,11 +5,13 @@ import '../models/student.dart';
 
 class StudentProvider extends ChangeNotifier {
   final StudentRepository _repository = StudentRepository();
-
+  int? sortColumnIndex;
+  bool sortAscending = true;
   final List<Student> _students = [];
-
   List<Student> _filteredStudents = [];
-
+  final Set<int> _selectedStudents = {};
+  int get selectedCount => _selectedStudents.length;
+  Set<int> get selectedStudents => _selectedStudents;
   bool _isLoading = false;
 
   bool get isLoading => _isLoading;
@@ -39,6 +41,12 @@ class StudentProvider extends ChangeNotifier {
     return (_filteredStudents.length / _rowsPerPage).ceil();
   }
 
+  List<Student> get selectedStudentsList {
+    return _filteredStudents
+        .where((student) => _selectedStudents.contains(student.id))
+        .toList();
+  }
+
   List<Student> get paginatedStudents {
     if (_filteredStudents.isEmpty) return [];
 
@@ -65,7 +73,7 @@ class StudentProvider extends ChangeNotifier {
       ..addAll(students);
 
     _refreshFilteredStudents();
-
+    _selectedStudents.clear();
     _isLoading = false;
     notifyListeners();
   }
@@ -82,6 +90,72 @@ class StudentProvider extends ChangeNotifier {
 
   Future<void> deleteStudent(int id) async {
     await _repository.deleteStudent(id);
+    await loadStudents();
+  }
+
+  bool isSelected(int id) => selectedStudents.contains(id);
+  void toggleSelection(int id) {
+    if (selectedStudents.contains(id)) {
+      selectedStudents.remove(id);
+    } else {
+      selectedStudents.add(id);
+    }
+
+    notifyListeners();
+  }
+
+  void sortByStudentNumber() {
+    sort((s) => s.studentNumber, 0, !sortAscending);
+  }
+
+  void sortByName() {
+    sort((s) => s.fullName, 1, !sortAscending);
+  }
+
+  void sortByCourse() {
+    sort((s) => s.course, 2, !sortAscending);
+  }
+
+  void sortByYear() {
+    sort((s) => s.yearLevel, 3, !sortAscending);
+  }
+
+  void clearSelection() {
+    selectedStudents.clear();
+    notifyListeners();
+  }
+
+  bool get allSelected {
+    if (_filteredStudents.isEmpty) return false;
+
+    return _selectedStudents.length == _filteredStudents.length;
+  }
+
+  void toggleSelectAll(List<Student> paginatedStudents, bool bool) {
+    if (allSelected) {
+      _selectedStudents.clear();
+    } else {
+      _selectedStudents
+        ..clear()
+        ..addAll(
+          _filteredStudents
+              .where((student) => student.id != null)
+              .map((student) => student.id!),
+        );
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> deleteSelectedStudents() async {
+    final ids = List<int>.from(_selectedStudents);
+
+    for (final id in ids) {
+      await _repository.deleteStudent(id);
+    }
+
+    _selectedStudents.clear();
+
     await loadStudents();
   }
 
@@ -158,6 +232,26 @@ class StudentProvider extends ChangeNotifier {
         }).toList();
 
     _currentPage = 1;
+  }
+
+  void sort<T>(
+    Comparable<T> Function(Student student) getField,
+    int columnIndex,
+    bool ascending,
+  ) {
+    _filteredStudents.sort((a, b) {
+      final aValue = getField(a);
+      final bValue = getField(b);
+
+      return ascending
+          ? Comparable.compare(aValue, bValue)
+          : Comparable.compare(bValue, aValue);
+    });
+
+    sortColumnIndex = columnIndex;
+    sortAscending = ascending;
+
+    notifyListeners();
   }
 
   List<Student> get recentStudents {

@@ -19,6 +19,10 @@ class StudentDataSource extends DataTableSource {
 
     return DataRow.byIndex(
       index: index,
+      selected: context.watch<StudentProvider>().isSelected(student.id!),
+      onSelectChanged: (selected) {
+        context.read<StudentProvider>().toggleSelection(student.id!);
+      },
       cells: [
         DataCell(Text(student.studentNumber)),
 

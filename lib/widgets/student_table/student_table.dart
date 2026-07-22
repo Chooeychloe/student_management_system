@@ -31,7 +31,7 @@ class StudentTable extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: Column(
             children: [
-              _buildHeader(),
+              _buildHeader(provider),
 
               const Divider(height: 1),
 
@@ -82,14 +82,33 @@ class StudentTable extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(StudentProvider provider) {
+    final allSelected =
+        provider.paginatedStudents.isNotEmpty &&
+        provider.paginatedStudents.every(
+          (student) => provider.isSelected(student.id!),
+        );
+
     return Container(
       height: 55,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       color: Colors.grey.shade100,
-      child: const Row(
+      child: Row(
         children: [
-          Expanded(
+          SizedBox(
+            width: 45,
+            child: Checkbox(
+              value: allSelected,
+              onChanged: (value) {
+                provider.toggleSelectAll(
+                  provider.paginatedStudents,
+                  value ?? false,
+                );
+              },
+            ),
+          ),
+
+          const Expanded(
             flex: 2,
             child: Text(
               "Student No.",
@@ -97,12 +116,12 @@ class StudentTable extends StatelessWidget {
             ),
           ),
 
-          Expanded(
+          const Expanded(
             flex: 4,
             child: Text("Name", style: TextStyle(fontWeight: FontWeight.bold)),
           ),
 
-          Expanded(
+          const Expanded(
             flex: 2,
             child: Text(
               "Course",
@@ -110,16 +129,17 @@ class StudentTable extends StatelessWidget {
             ),
           ),
 
-          Expanded(
+          const Expanded(
             flex: 1,
             child: Text("Year", style: TextStyle(fontWeight: FontWeight.bold)),
           ),
-          Expanded(
+
+          const Expanded(
             flex: 3,
             child: Text("Email", style: TextStyle(fontWeight: FontWeight.bold)),
           ),
 
-          Expanded(
+          const Expanded(
             flex: 2,
             child: Text(
               "Contact",
@@ -127,7 +147,7 @@ class StudentTable extends StatelessWidget {
             ),
           ),
 
-          Expanded(
+          const Expanded(
             flex: 2,
             child: Center(
               child: Text(
@@ -149,8 +169,21 @@ class StudentTable extends StatelessWidget {
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 16),
+      color:
+          provider.isSelected(student.id!)
+              ? Colors.indigo.withValues(alpha: 0.08)
+              : null,
       child: Row(
         children: [
+          SizedBox(
+            width: 45,
+            child: Checkbox(
+              value: provider.isSelected(student.id!),
+              onChanged: (_) {
+                provider.toggleSelection(student.id!);
+              },
+            ),
+          ),
           Expanded(flex: 2, child: Text(student.studentNumber)),
 
           Expanded(
