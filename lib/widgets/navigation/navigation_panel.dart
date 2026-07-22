@@ -79,7 +79,10 @@ class NavigationPanel extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       child: Material(
-        color: selected ? Colors.white.withOpacity(.18) : Colors.transparent,
+        color:
+            selected
+                ? Colors.white.withValues(alpha: 0.15)
+                : Colors.transparent,
         borderRadius: BorderRadius.circular(12),
         child: ListTile(
           leading: Icon(icon, color: Colors.white),

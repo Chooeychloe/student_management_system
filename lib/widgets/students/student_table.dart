@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student_management_system/providers/activity_provider.dart';
 import 'package:student_management_system/widgets/dialogs/delete_confirmation_dialog.dart';
 import 'package:student_management_system/widgets/dialogs/student_profile_dialog.dart';
 
@@ -204,9 +205,21 @@ class StudentTable extends StatelessWidget {
                                 "${student.firstName} ${student.lastName}?\n\n"
                                 "This action cannot be undone.",
                             onConfirm: () async {
+                              final activityProvider =
+                                  context.read<ActivityProvider>();
+                              final messenger = ScaffoldMessenger.of(context);
+
                               await provider.deleteStudent(student.id!);
 
-                              ScaffoldMessenger.of(context).showSnackBar(
+                              activityProvider.addActivity(
+                                title: "Student Deleted",
+                                description:
+                                    "${student.firstName} ${student.lastName} (${student.studentNumber}) was deleted.",
+                              );
+
+                              if (!context.mounted) return;
+
+                              messenger.showSnackBar(
                                 const SnackBar(
                                   content: Text(
                                     "Student deleted successfully.",

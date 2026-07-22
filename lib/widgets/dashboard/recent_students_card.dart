@@ -10,6 +10,8 @@ class RecentStudentsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<StudentProvider>();
 
+    final students = provider.students.reversed.take(5).toList();
+
     return Card(
       elevation: 3,
       child: Padding(
@@ -18,31 +20,26 @@ class RecentStudentsCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Recent Students",
+              "Recently Added Students",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 20),
 
-            Expanded(
-              child: ListView.separated(
-                itemCount: provider.recentStudents.length,
-                separatorBuilder: (_, __) => const Divider(),
-                itemBuilder: (_, index) {
-                  final student = provider.recentStudents[index];
+            if (students.isEmpty)
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(30),
+                  child: Text("No students found."),
+                ),
+              ),
 
-                  return ListTile(
-                    leading: CircleAvatar(child: Text(student.firstName[0])),
-
-                    title: Text("${student.firstName} ${student.lastName}"),
-
-                    subtitle: Text(
-                      "${student.course} • Year ${student.yearLevel}",
-                    ),
-
-                    trailing: Text(student.studentNumber),
-                  );
-                },
+            ...students.map(
+              (student) => ListTile(
+                leading: const CircleAvatar(child: Icon(Icons.person)),
+                title: Text("${student.firstName} ${student.lastName}"),
+                subtitle: Text(student.studentNumber),
+                trailing: Text(student.course),
               ),
             ),
           ],

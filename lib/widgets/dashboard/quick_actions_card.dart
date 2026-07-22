@@ -19,30 +19,60 @@ class QuickActionsCard extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            Expanded(
-              child: ListView(
-                children: [
-                  _action(Icons.person_add, "Add Student"),
-                  _action(Icons.upload_file, "Import CSV"),
-                  _action(Icons.download, "Export CSV"),
-                  _action(Icons.backup, "Backup Database"),
-                  _action(Icons.refresh, "Refresh"),
-                ],
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                icon: const Icon(Icons.person_add),
+                label: const Text("Add Student"),
+                onPressed: () {},
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.upload_file),
+                label: const Text("Import CSV"),
+                onPressed: () {},
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.download),
+                label: const Text("Export CSV"),
+                onPressed: () {},
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.backup),
+                label: const Text("Backup Database"),
+                onPressed: () {},
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.refresh),
+                label: const Text("Refresh"),
+                onPressed: () {},
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _action(IconData icon, String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: FilledButton.icon(
-        onPressed: () {},
-        icon: Icon(icon),
-        label: Text(title),
       ),
     );
   }

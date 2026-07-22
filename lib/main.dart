@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:student_management_system/providers/activity_provider.dart';
 import 'package:student_management_system/providers/navigation_provider.dart';
 import 'package:student_management_system/providers/recent_students_provider.dart';
 
@@ -34,6 +35,7 @@ Future<void> main() async {
         ChangeNotifierProvider(
           create: (_) => RecentStudentsProvider()..loadRecentStudents(),
         ),
+        ChangeNotifierProvider(create: (_) => ActivityProvider()),
       ],
 
       child: const StudentManagementApp(),

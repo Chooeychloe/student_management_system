@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student_management_system/providers/activity_provider.dart';
 import 'package:student_management_system/services/export_service.dart';
 import 'package:student_management_system/services/import_service.dart';
 import 'package:student_management_system/widgets/dialogs/import_result_dialog.dart';
@@ -87,31 +88,50 @@ class SearchToolbar extends StatelessWidget {
               label: const Text("Export CSV"),
               onPressed: () async {
                 final provider = context.read<StudentProvider>();
+                final activityProvider = context.read<ActivityProvider>();
+                final messenger = ScaffoldMessenger.of(context);
 
                 final success = await ExportService().exportStudentsToCSV(
                   provider.filteredStudents,
                 );
 
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        success
-                            ? "CSV exported successfully."
-                            : "Export cancelled.",
-                      ),
+                activityProvider.addActivity(
+                  title: "CSV Exported",
+                  description:
+                      "${provider.filteredStudents.length} student records exported.",
+                );
+
+                if (!context.mounted) return;
+
+                messenger.showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      success
+                          ? "CSV exported successfully."
+                          : "Export cancelled.",
                     ),
-                  );
-                }
+                  ),
+                );
               },
             ),
             OutlinedButton.icon(
               icon: const Icon(Icons.upload_file),
               label: const Text("Import CSV"),
               onPressed: () async {
+                final studentProvider = context.read<StudentProvider>();
+                final activityProvider = context.read<ActivityProvider>();
+
                 final result = await ImportService().importStudentsFromCSV();
 
-                await context.read<StudentProvider>().loadStudents();
+                await studentProvider.loadStudents();
+
+                activityProvider.addActivity(
+                  title: "CSV Imported",
+                  description:
+                      "${result.imported} students imported, "
+                      "${result.duplicates} duplicates skipped, "
+                      "${result.invalid} invalid rows.",
+                );
 
                 if (!context.mounted) return;
 

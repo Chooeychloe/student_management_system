@@ -1,56 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:student_management_system/widgets/dashboard/quick_actions_card.dart';
-import 'package:student_management_system/widgets/dashboard/recent_students_card.dart';
 
+import 'dashboard_header.dart';
 import 'dashboard_statistics.dart';
-import 'course_pie_chart.dart';
-import 'year_bar_chart.dart';
+
+import 'sections/actions_section.dart';
+import 'sections/charts_section.dart';
+import 'sections/activity_section.dart';
 
 class DashboardContent extends StatelessWidget {
   const DashboardContent({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(24),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Dashboard",
-            style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
-          ),
+        children: const [
+          DashboardHeader(),
 
-          SizedBox(height: 25),
+          SizedBox(height: 24),
 
           DashboardStatistics(),
 
-          // SizedBox(height: 25),
+          SizedBox(height: 24),
 
-          // Expanded(
-          //   child: Row(
-          //     crossAxisAlignment: CrossAxisAlignment.start,
-          //     children: [
-          //       Expanded(flex: 2, child: CoursePieChart()),
+          ActionsSection(),
 
-          //       SizedBox(width: 20),
+          SizedBox(height: 24),
 
-          //       Expanded(flex: 2, child: YearBarChart()),
-          //     ],
-          //   ),
-          // ),
-          SizedBox(height: 20),
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(flex: 2, child: QuickActionsCard()),
+          ChartsSection(),
 
-                SizedBox(width: 20),
+          SizedBox(height: 24),
 
-                Expanded(flex: 3, child: RecentStudentsCard()),
-              ],
-            ),
-          ),
+          ActivitySection(),
         ],
       ),
     );

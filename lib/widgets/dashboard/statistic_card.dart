@@ -28,7 +28,7 @@ class StatisticCard extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 26,
-              backgroundColor: color.withOpacity(.12),
+              backgroundColor: Colors.white.withValues(alpha: 0.15),
               child: Icon(icon, color: color, size: 28),
             ),
 

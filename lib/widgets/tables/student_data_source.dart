@@ -46,6 +46,8 @@ class StudentDataSource extends DataTableSource {
                 icon: const Icon(Icons.delete, color: Colors.red),
                 tooltip: "Delete Student",
                 onPressed: () async {
+                  final provider = context.read<StudentProvider>();
+
                   final delete = await showDialog<bool>(
                     context: context,
                     builder:
@@ -56,26 +58,20 @@ class StudentDataSource extends DataTableSource {
                           ),
                           actions: [
                             TextButton(
-                              onPressed: () {
-                                Navigator.pop(context, false);
-                              },
+                              onPressed: () => Navigator.pop(context, false),
                               child: const Text("Cancel"),
                             ),
                             FilledButton(
-                              onPressed: () {
-                                Navigator.pop(context, true);
-                              },
+                              onPressed: () => Navigator.pop(context, true),
                               child: const Text("Delete"),
                             ),
                           ],
                         ),
                   );
 
-                  if (delete == true) {
-                    await context.read<StudentProvider>().deleteStudent(
-                      student.id!,
-                    );
-                  }
+                  if (delete != true) return;
+
+                  await provider.deleteStudent(student.id!);
                 },
               ),
             ],

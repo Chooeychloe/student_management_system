@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student_management_system/providers/activity_provider.dart';
 
 import '../../core/constants.dart';
 import '../../models/student.dart';
@@ -96,19 +97,34 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
       address: addressController.text.trim(),
     );
 
-    final provider = context.read<StudentProvider>();
+    final studentProvider = context.read<StudentProvider>();
+    final activityProvider = context.read<ActivityProvider>();
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
 
     if (isEdit) {
-      await provider.updateStudent(student);
+      await studentProvider.updateStudent(student);
+
+      activityProvider.addActivity(
+        title: "Student Updated",
+        description:
+            "${student.firstName} ${student.lastName} (${student.studentNumber}) was updated.",
+      );
     } else {
-      await provider.addStudent(student);
+      await studentProvider.addStudent(student);
+
+      activityProvider.addActivity(
+        title: "Student Added",
+        description:
+            "${student.firstName} ${student.lastName} (${student.studentNumber}) was added.",
+      );
     }
 
     if (!mounted) return;
 
-    Navigator.pop(context);
+    navigator.pop();
 
-    ScaffoldMessenger.of(context).showSnackBar(
+    messenger.showSnackBar(
       SnackBar(
         content: Text(
           isEdit
