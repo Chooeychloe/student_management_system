@@ -18,65 +18,78 @@ class StudentActions extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton(
-          tooltip: "View",
-          icon: const Icon(Icons.visibility, color: Colors.blue),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (_) => StudentProfileDialog(student: student),
-            );
-          },
+        Tooltip(
+          message: "View Student",
+
+          child: IconButton(
+            tooltip: "View",
+            icon: const Icon(Icons.visibility, color: Colors.blue),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => StudentProfileDialog(student: student),
+              );
+            },
+          ),
         ),
 
-        IconButton(
-          tooltip: "Edit",
-          icon: const Icon(Icons.edit),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (_) => StudentFormDialog(student: student),
-            );
-          },
+        Tooltip(
+          message: "Edit Student",
+
+          child: IconButton(
+            tooltip: "Edit",
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => StudentFormDialog(student: student),
+              );
+            },
+          ),
         ),
 
-        IconButton(
-          tooltip: "Delete",
-          icon: const Icon(Icons.delete, color: Colors.red),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder:
-                  (_) => DeleteConfirmationDialog(
-                    title: "Delete Student",
-                    message:
-                        "Are you sure you want to delete "
-                        "${student.firstName} ${student.lastName}?\n\n"
-                        "This action cannot be undone.",
-                    onConfirm: () async {
-                      final provider = context.read<StudentProvider>();
-                      final activityProvider = context.read<ActivityProvider>();
-                      final messenger = ScaffoldMessenger.of(context);
+        Tooltip(
+          message: "Delete Student",
 
-                      await provider.deleteStudent(student.id!);
+          child: IconButton(
+            tooltip: "Delete",
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder:
+                    (_) => DeleteConfirmationDialog(
+                      title: "Delete Student",
+                      message:
+                          "Are you sure you want to delete "
+                          "${student.firstName} ${student.lastName}?\n\n"
+                          "This action cannot be undone.",
+                      onConfirm: () async {
+                        final provider = context.read<StudentProvider>();
+                        final activityProvider =
+                            context.read<ActivityProvider>();
+                        final messenger = ScaffoldMessenger.of(context);
 
-                      activityProvider.addActivity(
-                        title: "Student Deleted",
-                        description:
-                            "${student.firstName} ${student.lastName} (${student.studentNumber}) was deleted.",
-                      );
+                        await provider.deleteStudent(student.id!);
 
-                      if (!context.mounted) return;
+                        activityProvider.addActivity(
+                          title: "Student Deleted",
+                          description:
+                              "${student.firstName} ${student.lastName} (${student.studentNumber}) was deleted.",
+                        );
 
-                      messenger.showSnackBar(
-                        const SnackBar(
-                          content: Text("Student deleted successfully."),
-                        ),
-                      );
-                    },
-                  ),
-            );
-          },
+                        if (!context.mounted) return;
+
+                        messenger.showSnackBar(
+                          const SnackBar(
+                            content: Text("Student deleted successfully."),
+                          ),
+                        );
+                      },
+                    ),
+              );
+            },
+          ),
         ),
       ],
     );

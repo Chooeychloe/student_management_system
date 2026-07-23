@@ -25,6 +25,8 @@ class StudentTableHeader extends StatelessWidget {
       color: Colors.grey.shade100,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
+
         children: [
           SizedBox(
             width: 45,
@@ -45,24 +47,37 @@ class StudentTableHeader extends StatelessWidget {
           Expanded(
             flex: 2,
             child: _sortableTitle(
-              "Student No.",
-              () => provider.sortByStudentNumber(),
+              title: "Student No.",
+              field: "studentNumber",
+              onTap: provider.sortByStudentNumber,
             ),
           ),
 
           Expanded(
             flex: 4,
-            child: _sortableTitle("Name", () => provider.sortByName()),
+            child: _sortableTitle(
+              title: "Student Name",
+              field: "name",
+              onTap: provider.sortByName,
+            ),
           ),
 
           Expanded(
             flex: 2,
-            child: _sortableTitle("Course", () => provider.sortByCourse()),
+            child: _sortableTitle(
+              title: "Course",
+              field: "course",
+              onTap: provider.sortByCourse,
+            ),
           ),
 
           Expanded(
             flex: 1,
-            child: _sortableTitle("Year", () => provider.sortByYear()),
+            child: _sortableTitle(
+              title: "Year",
+              field: "year",
+              onTap: provider.sortByYear,
+            ),
           ),
 
           const Expanded(
@@ -92,15 +107,53 @@ class StudentTableHeader extends StatelessWidget {
     );
   }
 
-  Widget _sortableTitle(String title, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Row(
-        children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+  Widget _sortableTitle({
+    required String title,
+    required String field,
+    required VoidCallback onTap,
+  }) {
+    IconData icon = Icons.unfold_more;
 
-          const Icon(Icons.unfold_more, size: 18),
-        ],
+    if (provider.sortField == field) {
+      icon =
+          provider.sortAscending
+              ? Icons.keyboard_arrow_up
+              : Icons.keyboard_arrow_down;
+    }
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(6),
+          hoverColor: Colors.indigo.withValues(alpha: 0.08),
+          splashColor: Colors.indigo.withValues(alpha: 0.15),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Row(
+              children: [
+                Flexible(
+                  child: Text(
+                    title,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 180),
+                  transitionBuilder:
+                      (child, animation) =>
+                          RotationTransition(turns: animation, child: child),
+                  child: Icon(icon, key: ValueKey(icon), size: 18),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

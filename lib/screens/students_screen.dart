@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_management_system/widgets/students/student_table_action.dart';
 
 import '../widgets/students/search_toolbar.dart';
 import '../widgets/student_table/student_table.dart';
@@ -21,8 +22,11 @@ class StudentsScreen extends StatelessWidget {
           SizedBox(height: 24),
 
           SearchToolbar(),
+          SizedBox(height: 15),
 
-          SizedBox(height: 20),
+          StudentTableActions(),
+
+          SizedBox(height: 15),
 
           Expanded(child: StudentTable()),
         ],

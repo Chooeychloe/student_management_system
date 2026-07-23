@@ -5,8 +5,12 @@ import '../models/student.dart';
 
 class StudentProvider extends ChangeNotifier {
   final StudentRepository _repository = StudentRepository();
-  int? sortColumnIndex;
-  bool sortAscending = true;
+  // Sorting
+  String? _sortField;
+  bool _sortAscending = true;
+
+  String? get sortField => _sortField;
+  bool get sortAscending => _sortAscending;
   final List<Student> _students = [];
   List<Student> _filteredStudents = [];
   final Set<int> _selectedStudents = {};
@@ -19,6 +23,13 @@ class StudentProvider extends ChangeNotifier {
   List<Student> get students => List.unmodifiable(_students);
 
   List<Student> get filteredStudents => List.unmodifiable(_filteredStudents);
+  int get startRecord =>
+      _filteredStudents.isEmpty ? 0 : ((_currentPage - 1) * _rowsPerPage) + 1;
+
+  int get endRecord {
+    final end = _currentPage * _rowsPerPage;
+    return end > _filteredStudents.length ? _filteredStudents.length : end;
+  }
 
   // Search & Filter
   String searchText = "";
@@ -27,7 +38,7 @@ class StudentProvider extends ChangeNotifier {
 
   // Pagination
   int _currentPage = 1;
-  final int _rowsPerPage = 10;
+  int _rowsPerPage = 10;
 
   int get currentPage => _currentPage;
 
@@ -41,10 +52,66 @@ class StudentProvider extends ChangeNotifier {
     return (_filteredStudents.length / _rowsPerPage).ceil();
   }
 
+  void firstPage() {
+    _currentPage = 1;
+    notifyListeners();
+  }
+
+  void lastPage() {
+    _currentPage = totalPages;
+    notifyListeners();
+  }
+
+  List<int> get visiblePages {
+    const window = 2;
+
+    int start = _currentPage - window;
+    int end = _currentPage + window;
+
+    if (start < 1) {
+      end += 1 - start;
+      start = 1;
+    }
+
+    if (end > totalPages) {
+      start -= end - totalPages;
+      end = totalPages;
+    }
+
+    if (start < 1) start = 1;
+
+    return List.generate(end - start + 1, (index) => start + index);
+  }
+
   List<Student> get selectedStudentsList {
     return _filteredStudents
         .where((student) => _selectedStudents.contains(student.id))
         .toList();
+  }
+
+  void setRowsPerPage(int rows) {
+    _rowsPerPage = rows;
+    _currentPage = 1;
+    notifyListeners();
+  }
+
+  void _sortStudents<T extends Comparable>(
+    Comparable Function(Student student) selector,
+    String field,
+  ) {
+    if (_sortField == field) {
+      _sortAscending = !_sortAscending;
+    } else {
+      _sortField = field;
+      _sortAscending = true;
+    }
+
+    _filteredStudents.sort((a, b) {
+      final result = selector(a).compareTo(selector(b));
+      return _sortAscending ? result : -result;
+    });
+
+    notifyListeners();
   }
 
   List<Student> get paginatedStudents {
@@ -104,27 +171,21 @@ class StudentProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void sortByStudentNumber() {
-    sort((s) => s.studentNumber, 0, !sortAscending);
-  }
+  void sortByStudentNumber() =>
+      _sortStudents((s) => s.studentNumber, "studentNumber");
 
-  void sortByName() {
-    sort((s) => s.fullName, 1, !sortAscending);
-  }
+  void sortByName() => _sortStudents((s) => s.fullName, "name");
 
-  void sortByCourse() {
-    sort((s) => s.course, 2, !sortAscending);
-  }
+  void sortByCourse() => _sortStudents((s) => s.course, "course");
 
-  void sortByYear() {
-    sort((s) => s.yearLevel, 3, !sortAscending);
-  }
+  void sortByYear() => _sortStudents((s) => s.yearLevel, "year");
 
   void clearSelection() {
     selectedStudents.clear();
     notifyListeners();
   }
 
+  bool get hasSelection => selectedStudents.isNotEmpty;
   bool get allSelected {
     if (_filteredStudents.isEmpty) return false;
 
@@ -234,25 +295,25 @@ class StudentProvider extends ChangeNotifier {
     _currentPage = 1;
   }
 
-  void sort<T>(
-    Comparable<T> Function(Student student) getField,
-    int columnIndex,
-    bool ascending,
-  ) {
-    _filteredStudents.sort((a, b) {
-      final aValue = getField(a);
-      final bValue = getField(b);
+  // void sort<T>(
+  //   Comparable<T> Function(Student student) getField,
+  //   int columnIndex,
+  //   bool ascending,
+  // ) {
+  //   _filteredStudents.sort((a, b) {
+  //     final aValue = getField(a);
+  //     final bValue = getField(b);
 
-      return ascending
-          ? Comparable.compare(aValue, bValue)
-          : Comparable.compare(bValue, aValue);
-    });
+  //     return ascending
+  //         ? Comparable.compare(aValue, bValue)
+  //         : Comparable.compare(bValue, aValue);
+  //   });
 
-    sortColumnIndex = columnIndex;
-    sortAscending = ascending;
+  //   sortColumnIndex = columnIndex;
+  //   sortAscending = ascending;
 
-    notifyListeners();
-  }
+  //   notifyListeners();
+  // }
 
   List<Student> get recentStudents {
     final students = List<Student>.from(_students);

@@ -41,9 +41,7 @@ class StudentTableRow extends StatelessWidget {
                   width: 45,
                   child: Checkbox(
                     value: provider.isSelected(student.id!),
-                    onChanged: (_) {
-                      provider.toggleSelection(student.id!);
-                    },
+                    onChanged: (_) => provider.toggleSelection(student.id!),
                   ),
                 ),
 
@@ -55,8 +53,14 @@ class StudentTableRow extends StatelessWidget {
 
                 Expanded(flex: 1, child: Text("${student.yearLevel}")),
 
-                Expanded(flex: 3, child: Text(student.email)),
-
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    student.email,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
                 Expanded(flex: 2, child: Text(student.contactNumber)),
 
                 Expanded(flex: 2, child: StudentActions(student: student)),
